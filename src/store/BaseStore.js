@@ -1,6 +1,18 @@
-const firebase = require('firebase');
+const firebase = require("firebase");
 
-const FIREBASE_CONFIG = JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG);
+var REACT_APP_FIREBASE_CONFIG={
+  "apiKey": "AIzaSyCgz1Jo6ueG0pTIC4mwhaD6kGa0ehIWLsQ",
+  "authDomain": "synchronous-lecture-tool.firebaseapp.com",
+  "projectId": "synchronous-lecture-tool",
+  "storageBucket": "synchronous-lecture-tool.appspot.com",
+  "messagingSenderId": "237302221266",
+  "appId": "1:237302221266:web:373375efd019c40b81e00b",
+  "measurementId": "G-YSQFTPKE7E"
+}
+
+var string = JSON.stringify(REACT_APP_FIREBASE_CONFIG);
+console.log(string);
+const FIREBASE_CONFIG = JSON.parse(string);
 
 
 class BaseStore {

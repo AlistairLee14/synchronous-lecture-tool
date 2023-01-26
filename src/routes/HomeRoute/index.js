@@ -58,7 +58,7 @@ const HomeRoute = () => {
           </Button>
         </Form>
         <aside>
-          Want to create your own quiz?&nbsp;
+          Lecturers create an account here: &nbsp;
           <Link to="/login">
             Sign Up
           </Link>

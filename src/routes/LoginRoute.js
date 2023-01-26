@@ -63,7 +63,7 @@ const LoginRoute = props => {
   } else if (isExistingUser) {
     return (
       <CenteredContainer maxWidth={500} verticalCentered>
-        <h1>Login to Cahoots!</h1>
+        <h1>Login to LecturePal!</h1>
         <LoginForm onUserChange={setUser} />
         <div>
           No account? <br />
@@ -74,7 +74,7 @@ const LoginRoute = props => {
   } else {
     return (
       <CenteredContainer maxWidth={500} verticalCentered>
-        <h1>Signup for Cahoots!</h1>
+        <h1>Signup for LecturePal!</h1>
         <SignupForm onUserChange={setUser} />
         <div>
           Have an account? <br />

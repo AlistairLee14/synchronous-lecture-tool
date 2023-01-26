@@ -3,14 +3,13 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 
 var firebaseConfig = {
-  apiKey: "AIzaSyC1QPvHcz3Y7gAsUUNN6sTy9sEgvtE9tRA",
-  authDomain: "cahoots-37a93.firebaseapp.com",
-  databaseURL: "https://cahoots-37a93.firebaseio.com",
-  projectId: "cahoots-37a93",
-  storageBucket: "cahoots-37a93.appspot.com",
-  messagingSenderId: "295846162316",
-  appId: "1:295846162316:web:cb3283790c16ffa536b0a9",
-  measurementId: "G-L8SFBD43DB"
+  apiKey: "AIzaSyCgz1Jo6ueG0pTIC4mwhaD6kGa0ehIWLsQ",
+  authDomain: "synchronous-lecture-tool.firebaseapp.com",
+  projectId: "synchronous-lecture-tool",
+  storageBucket: "synchronous-lecture-tool.appspot.com",
+  messagingSenderId: "237302221266",
+  appId: "1:237302221266:web:373375efd019c40b81e00b",
+  measurementId: "G-YSQFTPKE7E"
 };
 firebase.initializeApp(firebaseConfig);
 

@@ -14,6 +14,7 @@ class UserStore extends BaseStore {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.log(error);
         // auth/email-already-in-use
         // auth/invalid-email
         // auth/operation-not-allowed
