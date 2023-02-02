@@ -16,7 +16,7 @@ class QuestionStore extends BaseStore {
     let addAttrs = {};
 
     if ('gameId' in scopes) {
-      chain = chain.collection('games').doc(scopes.gameId).collection('questions');
+      chain = chain.collection('lecture_session_id').doc(scopes.gameId).collection('slides');
       addAttrs['gameId'] = scopes.gameId;
     }
 
@@ -30,7 +30,7 @@ class QuestionStore extends BaseStore {
     let attributesCopy = Object.assign({}, attributes);
     const gameId = popKey(attributesCopy, 'gameId');
 
-    let collection = this.firestore.collection('games').doc(gameId).collection('questions');
+    let collection = this.firestore.collection('lecture_session_id').doc(gameId).collection('slides');
 
     return collection
       .add(attributesCopy)
@@ -50,7 +50,7 @@ class QuestionStore extends BaseStore {
     let attributesCopy = Object.assign({}, attributes);
     const gameId = popKey(attributesCopy, 'gameId');
 
-    let doc = this.firestore.collection('games').doc(gameId).collection('questions').doc(questionId);
+    let doc = this.firestore.collection('lecture_session_id').doc(gameId).collection('questions').doc(questionId);
 
     return doc.update(attributesCopy);
   }
@@ -60,7 +60,7 @@ class QuestionStore extends BaseStore {
     let addAttrs = {};
 
     if ('gameId' in scopes) {
-      chain = chain.collection('games').doc(scopes.gameId).collection('questions');
+      chain = chain.collection('lecture_session_id').doc(scopes.gameId).collection('questions');
       addAttrs['gameId'] = scopes.gameId;
     }
     if ('from' in scopes) {
