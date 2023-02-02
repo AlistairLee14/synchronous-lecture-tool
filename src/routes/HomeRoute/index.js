@@ -37,7 +37,7 @@ const HomeRoute = () => {
   else {
     return (
       <CenteredContainer maxWidth={500} verticalCentered={true}>
-        <h1 className={styles.hero_heading}>Cahoots!</h1>
+        <h1 className={styles.hero_heading}>LecturePal</h1>
         <Form
           className="mb-5"
           onSubmit={(e) => {
@@ -46,7 +46,7 @@ const HomeRoute = () => {
           }}
         >
           <FormGroup>
-            <Label for="shortCode">Game Code:</Label>
+            <Label for="shortCode">Lecture Code:</Label>
             <Input id="shortCode" type="number" value={shortCode} onChange={e => setShortCode(e.target.value)} />
           </FormGroup>
           <Button
@@ -54,7 +54,7 @@ const HomeRoute = () => {
             disabled={!shortCode}
             type="submit"
           >
-            Find Game
+            Join a Lecture Session
           </Button>
         </Form>
         <aside>

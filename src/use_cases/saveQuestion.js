@@ -8,14 +8,14 @@ import { popKey } from '../utils/popKey';
  * @returns Promise - resolves to either Object or void
  */
 const saveQuestion = (attributes, questionStore = new QuestionStore()) => {
-  let attributesCopy = Object.assign({}, attributes);
-
-  if ('id' in attributesCopy) {
-    const questionId = popKey(attributesCopy, 'id');
-    return questionStore.update(questionId, attributesCopy);
-  } else {
-    return questionStore.create(attributesCopy);
-  }
+	let attributesCopy = Object.assign({}, attributes);
+	
+	if ('id' in attributesCopy) {
+	  const questionId = popKey(attributesCopy, 'id');
+	  return questionStore.update(questionId, attributesCopy);
+	} else {
+	  return questionStore.create(attributesCopy);
+	}
 };
 
 export default saveQuestion;

@@ -11,7 +11,7 @@ var REACT_APP_FIREBASE_CONFIG={
 }
 
 var string = JSON.stringify(REACT_APP_FIREBASE_CONFIG);
-console.log(string);
+// console.log(string);
 const FIREBASE_CONFIG = JSON.parse(string);
 
 

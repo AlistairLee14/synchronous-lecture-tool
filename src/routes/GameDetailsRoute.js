@@ -3,7 +3,9 @@ import { Button } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom';
 import getGame from '../use_cases/getGame';
 import getQuestions from '../use_cases/getQuestions';
-import { EditableQuestion } from '../view_components/EditableQuestion';
+// import { EditableQuestion } from '../view_components/EditableQuestion';
+import { SlideUploader } from '../view_components/SlideUploader';
+
 import saveQuestion from '../use_cases/saveQuestion';
 import CenteredContainer from '../view_components/CenteredContainer';
 
@@ -36,7 +38,7 @@ const GameDetailsRoute = props => {
             </Link>
           : null
         }
-        {questions.map(question => <EditableQuestion key={question.id} question={question}/>)}
+        {questions.map(question => <SlideUploader key={question.id} question={question}/>)}
         <Button
           onClick={() => {
             saveQuestion({ gameId: gameId, order: questions.length + 1 })

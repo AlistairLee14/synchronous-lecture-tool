@@ -13,6 +13,7 @@ const MyGamesRoute = () => {
   }, []);
 
   if (redirectUrl) {
+    console.log("redirecting");
     return <Redirect to={redirectUrl} />;
   } else {
     return (
