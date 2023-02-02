@@ -45,7 +45,7 @@ const GameDetailsRoute = props => {
               .then(newQn => setQuestions(questions.concat([newQn])))
           }}
         >
-          Add Question
+          Add Slides
         </Button>
       </CenteredContainer>
     );
