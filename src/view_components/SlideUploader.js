@@ -1,35 +1,38 @@
 import React, { useState } from 'react';
 import { Card, Button, Spinner, FormGroup, Label } from 'reactstrap';
-import { getDownloadURL } from "firebase/storage";
 import firebase from 'firebase';
-const STATE_DEFAULT = 'default';
-const STATE_SAVING = 'saving';
+const STATE_DEFAULT = 'Save';
+const STATE_SAVING = 'Saving';
+const STATE_SAVED = 'Saved';
 
 
 
-export const SlideUploader = ( ) => {
+export const SlideUploader = ( attributes ) => {
+	console.log(attributes.lecture_id);
 	const [slides, setSlides] = useState("");
 	const [componentState, setComponentState] = useState(STATE_DEFAULT);
-
-	const updateSelectedFile = (selectedFile) => {
-		setSlides(Object.assign({}, slides, selectedFile));
-	}
+	const [slideLinks, setSlideLinks] = useState([])
 	
 	function handleUpload(file) {
 	    if (!file) {
 	        alert("Please choose a file first!");
-			return;
+			return 1;
 	    }
 
 		var storage = firebase.storage();
 	
-		storage.ref(`lectureSlides/${slides.name}`).put(slides)
+		// TODO: find a way to put the lecture session id (game name?) into the path here!!
+		storage.ref(`lectureSlides/${attributes.lecture_id}/${slides.name}`).put(slides)
 		.then(snapshot => {
 			snapshot.ref.getDownloadURL()
 			.then((url) => {
 				console.log("download the file at: " + url);
+				setSlideLinks(slideLinks.concat(url));
+				console.log(slideLinks);
 			});
 		});
+
+		return 0;
 		
 	}
 
@@ -60,11 +63,14 @@ export const SlideUploader = ( ) => {
 					className="mt-4"
 					onClick={() => {
 						setComponentState(STATE_SAVING);
-						handleUpload(slides);
-						setComponentState(STATE_DEFAULT);
+						if (handleUpload(slides) == 0) {
+							setComponentState(STATE_SAVED);
+						} else {
+							setComponentState(STATE_DEFAULT);
+						}
 					}}
 				>
-					Save
+					{componentState} {/** Saved, Saving or Saved (useState) */}
 				</Button>
 				}
 			</Card>

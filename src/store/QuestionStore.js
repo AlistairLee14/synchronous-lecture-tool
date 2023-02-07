@@ -26,6 +26,7 @@ class QuestionStore extends BaseStore {
       .then(questionDoc => this._convertDocToQuestion(questionDoc, addAttrs));
   }
 
+  // attributes should contain gameId
   create(attributes) {
     let attributesCopy = Object.assign({}, attributes);
     const gameId = popKey(attributesCopy, 'gameId');
