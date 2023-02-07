@@ -33,19 +33,20 @@ const GameDetailsRoute = props => {
         {questions.length > 0
           ? <Link to={`/lobby/${gameId}`}>
               <Button color="success" size="lg">
-                Start Game
+                Start Lecture
               </Button>
             </Link>
           : null
         }
-        {questions.map(question => <SlideUploader key={question.id} question={question}/>)}
+        {/* look in original gamedetailsroutes for comparison between slideuploader and editablequestion */}
+        {questions.map(question => <SlideUploader lecture_id ={gameId} key={question.id} question={question}/>)}
         <Button
           onClick={() => {
             saveQuestion({ gameId: gameId, order: questions.length + 1 })
               .then(newQn => setQuestions(questions.concat([newQn])))
           }}
         >
-          Add Question
+          Add Slides
         </Button>
       </CenteredContainer>
     );
