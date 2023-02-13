@@ -49,6 +49,8 @@ class GameStore extends BaseStore {
       chain = chain.limit(scopes.limit);
     }
 
+    console.log(chain);
+
     return chain
       .get()
       .then(snapshot => snapshot.docs.map((a) => this._convertDocToGame(a)))
