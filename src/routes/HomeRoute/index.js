@@ -32,7 +32,7 @@ const HomeRoute = () => {
     );
   }
   else if (games.length == 1) {
-    return <Redirect to={`/join/${games[0].id}`} />;
+    return <Redirect to={`/join/${games[0].id}`} />; // Important part here
   }
   else {
     return (
