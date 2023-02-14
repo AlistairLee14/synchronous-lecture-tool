@@ -22,14 +22,12 @@ const HeatmapBtn = ({ linkTo }) => {
 		<Link to={linkTo}>
 			<Button color="primary">Highlight difficulty area</Button>
 		</Link>
-		)
+	)
 }
 
 
 
-
-
-const DefaultStudentView = ({ parentUrl }) => {
+const DefaultHostView = ({ parentUrl }) => {
 	let { gameId } = useParams();
 	const [question, setQuestion] = useState(null);
 	const [timeLeft, setTimeLeft] = useState(SECONDS_TO_QUESTION);
@@ -82,29 +80,19 @@ const DefaultStudentView = ({ parentUrl }) => {
 		
 		{/* Card for input 1 - keyword */}
 		<Card body className="mt-4 mb-4">
-			<KeywordBtn
-				linkTo={`${parentUrl}/student/keywordEntry`}
-			/>
+			card 1
 				
 		</Card>
 
 		{/* Card for input 2 - summarise last topic */}
 		<Card body className="mt-4 mb-4">
-			{/* <KeywordBtn
-				onclick={submitSummarise(gameId)}
-			/> */}
-			<SummariseBtn 
-				isClickable = {summaryCooldown <= 0}
-				gameId={gameId}
-			/>
+			card 2
 			
 		</Card>
 
 		{/* Card for input 3 - heatmap */}
 		<Card body className="mt-4 mb-4">
-			<HeatmapBtn
-				linkTo={`${parentUrl}/student/heatmapEntry`}
-			/>
+			card 3
 				
 		</Card>
 
@@ -112,4 +100,4 @@ const DefaultStudentView = ({ parentUrl }) => {
 	)
 }
 
-export default DefaultStudentView
+export default DefaultHostView

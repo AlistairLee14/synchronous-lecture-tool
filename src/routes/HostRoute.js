@@ -5,7 +5,7 @@ import PendingQuestionRoute from './PendingQuestionRoute';
 import QuestionResultsRoute from './QuestionResultsRoute';
 import FinalResultsRoute from './FinalResultsRoute';
 import CurrentQuestionRoute from './CurrentQuestionRoute';
-import DefaultStudentView from './DefaultStudentView';
+import DefaultHostView from './DefaultHostView';
 
 
 const HostRoute = () => {
@@ -20,8 +20,8 @@ const HostRoute = () => {
       <Route path={`${path}/questions/current`}>
         <CurrentQuestionRoute parentUrl={url} />
       </Route>
-      <Route path={`${path}/student/default`}>
-        <DefaultStudentView parentUrl={url} />
+      <Route path={`${path}/host/default`}>
+        <DefaultHostView parentUrl={url} />
       </Route>
       <Route path={`${path}/results/final`}>
         <FinalResultsRoute parentUrl={url} />

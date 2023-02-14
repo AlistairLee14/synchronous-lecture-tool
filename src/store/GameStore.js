@@ -30,6 +30,7 @@ class GameStore extends BaseStore {
   }
 
   list(scopes = {}) {
+    // console.log(scopes.shortCode);
     let chain = this.firestore.collection('games');
 
     if ('ownerId' in scopes) {
@@ -37,9 +38,9 @@ class GameStore extends BaseStore {
       chain = chain.where("ownerId", "==", scopes.ownerId);
     }
 
-    if ('state' in scopes) {
-      chain = chain.where("state", "==", scopes.state);
-    }
+    // if ('state' in scopes) {
+    //   chain = chain.where("state", "==", scopes.state);
+    // }
 
     if ('shortCode' in scopes) {
       chain = chain.where("shortCode", "==", scopes.shortCode);

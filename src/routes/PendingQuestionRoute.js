@@ -26,7 +26,7 @@ const PendingQuestionRoute = ({ parentUrl }) => {
         {Math.ceil(timeLeft)}
       </div>
       {timeLeft <= 0
-        ? <Redirect to={`${parentUrl}/student/default`} />
+        ? <Redirect to={`${parentUrl}/host/default`} />
         : null
       }
     </CenteredContainer>

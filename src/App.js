@@ -34,7 +34,7 @@ function App() {
             <LobbyRoute />
           </Route>
           <Route path="/play/:gameId/as/:playerId">
-            <PlayerRoute />
+            <PlayerRoute parentUrl={`/play/:gameId/as/:playerId`} />
           </Route>
           <Route path="/join/:gameId">
             <JoinRoute />
