@@ -9,15 +9,57 @@ import CenteredContainer from '../view_components/CenteredContainer';
 import showCurrentQuestion from '../use_cases/showCurrentQuestion'
 import Question from '../view_components/Question'
 import { startTimer } from '../utils/calculateTimeLeft';
+import KeywordInput from '../view_components/KeywordInput';
+import firebase from "firebase/app";
+import "firebase/database";
 
 const SECONDS_TO_QUESTION = 10;
 
-const KeywordBtn = ({ linkTo }) => {
+const firebaseConfig = {
+	// your Firebase configuration
+	apiKey: "AIzaSyCgz1Jo6ueG0pTIC4mwhaD6kGa0ehIWLsQ",
+	authDomain: "synchronous-lecture-tool.firebaseapp.com",
+	projectId: "synchronous-lecture-tool",
+	storageBucket: "synchronous-lecture-tool.appspot.com",
+	messagingSenderId: "237302221266",
+	appId: "1:237302221266:web:373375efd019c40b81e00b",
+	measurementId: "G-YSQFTPKE7E", 	
+	databaseURL: "https://synchronous-lecture-tool.firebaseio.com"
+};
+  
+firebase.initializeApp(firebaseConfig);
+
+const database = firebase.database();
+
+const KeywordBtn = ({ linkTo, gameId }) => {
+	const [keyword, setKeyword] = useState('');
+
+	const submitKeyword = (gameId, keyword) => {
+		// Write the keyword to the Firebase database
+		// database.ref('keywords').push({ keyword });
+		const keywordsRef = firebase.firestore().collection(`gameId/${gameId}/keywords`);
+		keywordsRef.add({
+			keyword,
+			timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+		})
+		.then(function(docRef) {
+			console.log("Keyword written with ID: ", docRef.id);
+		})
+		.catch(function(error) {
+			console.error("Error adding keyword: ", error);
+		});
+		console.log(keywordsRef.toString());
+
+		console.log("pushed: " + `/gameId/${gameId}/keywords`);
+	};
+
 	return (
 		<Link to={linkTo}>
-			<Button color="primary">Enter a keyword</Button>
+		<Button color="primary">Enter a keyword</Button>
+		<KeywordInput onChange={(e) => setKeyword(e.target.value)} />
+		<Button onClick={() => submitKeyword(gameId, keyword)}>Submit</Button>
 		</Link>
-	)
+	);
 }
 
 const HeatmapBtn = ({ linkTo }) => {
@@ -48,159 +90,88 @@ const AnswerGrid = ({ recordAnswer }) => {
 
 const PlayerRoute = (parentUrl) => {
 	let { gameId, playerId } = useParams();
-	// const [currentGame, setCurrentGame] = useState();
-	// const [playerName, setPlayerName] = useState('');
-	// const [answer, setAnswer] = useState(null);
-	// const [errorMessage, setErrorMessage] = useState('');
+	const [summaryCooldown, setSummaryCooldown] = useState(5);
 
-	// const handleGameChange = (game) => {
-	// 	if (game) {
-	// 	// workaround to clear answer
-	// 	setAnswer(null);
-	// 	setCurrentGame(game);
-	// 	}
-	// }
-
-	// useEffect(() => {
-	// 	if (gameId && playerId) {
-	// 	getGame(gameId, handleGameChange);
-	// 	getPlayer(playerId, { gameId })
-	// 		.then(player => setPlayerName(player.name))
-	// 	}
-	// }, [gameId, playerId])
-
-	// const recordAnswer = ans => {
-	// 	// playerName is for convenience later, though it feels a little like this knows more about the store than it should
-	// 	addAnswer({ playerId, playerName, gameId, choice: ans })
-	// 	.then(setAnswer)
-	// 	.catch(e => {
-	// 		setErrorMessage(e)
-	// 		setTimeout(() => setErrorMessage(''), 5000)
-	// 	})
-	// }
-
-	// switch (currentGame ? currentGame.state : null) {
-	// 	case 'standard':
-	// 		return (
-	// 			<CenteredContainer maxWidth={500} verticalCentered={true}>
-	// 			Next question coming up...
-	// 			</CenteredContainer>
-	// 		)
-	// 	case 'showingQuestion':
-	// 		if (answer) {
-	// 			return (
-	// 			<CenteredContainer maxWidth={500} verticalCentered={true}>
-	// 				You chose {answer.choice}!
-	// 			</CenteredContainer>
-	// 			)
-	// 		}
-
-	// 		return (
-	// 			<CenteredContainer maxWidth={500} verticalCentered={true}>
-	// 			<Row className="mb-4">
-	// 				<Col sm={12}>
-	// 				<h2>Hi {playerName}!</h2>
-	// 				<h3>Choose your answer:</h3>
-	// 				</Col>
-	// 			</Row>
-	// 			<AnswerGrid recordAnswer={recordAnswer}/>
-	// 			{errorMessage ? <Alert color="danger">{errorMessage}</Alert> : null}
-	// 			</CenteredContainer>
-	// 		);
-	// 	case 'showingQuestionResults':
-	// 		return (
-	// 			<CenteredContainer maxWidth={500} verticalCentered={true}>
-	// 			<div>Showing question results...</div>
-	// 			</CenteredContainer>
-	// 		);
-
-	// 	default:
-	// 		return (
-	// 			<CenteredContainer maxWidth={500} verticalCentered={true}>
-	// 				Waiting for lecture to start...<br/><br/>
-
-	// 				Download the lecture files here: <br/>
-	// 				lecture id: {gameId}
-					
-	// 			</CenteredContainer>
-	// 		);
-	// }
-	const [question, setQuestion] = useState(null);
-	const [timeLeft, setTimeLeft] = useState(SECONDS_TO_QUESTION);
-	const [summaryCooldown, setSummaryCooldown] = useState(0);
-
-	const SummariseBtn = ({ isClickable, gameId }) => {
-		return isClickable ?
+	const SummariseBtn = ({ summaryCooldown, gameId, setSummaryCooldown }) => {
+		console.log("cooldown: " + summaryCooldown);
+		return (summaryCooldown <= 0) ?
 			(
-				<Button onClick={submitSummarise(gameId)} color="primary">Request a summary</Button>
+				// <Button onClick={submitSummarise(gameId, setSummaryCooldown)} color="primary">
+				// 	Request a summary
+				// </Button>
+				<Button onClick={() => submitSummarise({gameId, setSummaryCooldown})} color="primary">
+					Request a summary
+				</Button>
 			) 
 			:
 			(
-				<Button disabled color="primary">Not yet able to request another summary</Button>
+				<Button disabled color="primary">
+					Not yet able to request another summary
+				</Button>
 			)
 	}
 
-	const submitSummarise = ({gameId}) => {
+	const submitSummarise = ({gameId, setSummaryCooldown}) => {
 		// submit summary request to firebase with help of gameId
-		setSummaryCooldown(3);
-		console.log("summarise!");
+		startTimer({ seconds: 5, intervalCallback: setSummaryCooldown, endedCallback: () => setSummaryCooldown(0) });
+		setSummaryCooldown(5);
+		console.log("cooldown set to 5");
 	}
 
 	useEffect(() => {
 		if (gameId) {
-			startTimer({ seconds: 0, intervalCallback: setSummaryCooldown, endedCallback: setSummaryCooldown });
-			showCurrentQuestion(gameId).then(setQuestion);
+			startTimer({ seconds: 5, intervalCallback: setSummaryCooldown, endedCallback: setSummaryCooldown });
+			// showCurrentQuestion(gameId).then(setQuestion);
 		}
 	}, [gameId])
 
 	return (
 		<CenteredContainer verticalCentered={true}>
-		{/* {question ?
-			<div>
-				<Question question={question} />
-				<div className="mt-4">Time left:</div>
-				<div className="display-1">
-				{Math.ceil(timeLeft)}
+			{/* {question ?
+				<div>
+					<Question question={question} />
+					<div className="mt-4">Time left:</div>
+					<div className="display-1">
+					{Math.ceil(timeLeft)}
+					</div>
+					<ShowResultsBtn
+					isVisible={timeLeft <= 0}
+					linkTo={`${parentUrl}/results/${question.id}`}
+					/>
 				</div>
-				<ShowResultsBtn
-				isVisible={timeLeft <= 0}
-				linkTo={`${parentUrl}/results/${question.id}`}
-				/>
-			</div>
-			: <div>Loading...</div>
-		} */}
+				: <div>Loading...</div>
+			} */}
 
-		{/* Option for students to send difficulty points, request a last 30 second summary, or highlight slide sections that are difficult */}
-		{/* get slidelink(s) from firebase? save links into firebase at slideuploader, then load it from here with identifier being the lecture session id */}
-		
-		
-		{/* Card for input 1 - keyword */}
-		<Card body className="mt-4 mb-4">
-			<KeywordBtn
-				linkTo={`${parentUrl}/student/keywordEntry`}
-			/>
-				
-		</Card>
-
-		{/* Card for input 2 - summarise last topic */}
-		<Card body className="mt-4 mb-4">
-			{/* <KeywordBtn
-				onclick={submitSummarise(gameId)}
-			/> */}
-			<SummariseBtn 
-				isClickable = {summaryCooldown <= 0}
-				gameId={gameId}
-			/>
+			{/* Option for students to send difficulty points, request a last 30 second summary, or highlight slide sections that are difficult */}
+			{/* get slidelink(s) from firebase? save links into firebase at slideuploader, then load it from here with identifier being the lecture session id */}
 			
-		</Card>
+			
+			{/* Card for input 1 - keyword */}
+			<Card body className="mt-4 mb-4">
+				<KeywordBtn
+					linkTo={`${parentUrl}/student/keywordEntry`}
+					gameId={gameId}
+				/>
+					
+			</Card>
 
-		{/* Card for input 3 - heatmap */}
-		<Card body className="mt-4 mb-4">
-			<HeatmapBtn
-				linkTo={`${parentUrl}/student/heatmapEntry`}
-			/>
+			{/* Card for input 2 - summarise last topic */}
+			<Card body className="mt-4 mb-4">
+				<SummariseBtn 
+					summaryCooldown={summaryCooldown}
+					gameId={gameId}
+					setSummaryCooldown={setSummaryCooldown}
+				/>
 				
-		</Card>
+			</Card>
+
+			{/* Card for input 3 - heatmap */}
+			<Card body className="mt-4 mb-4">
+				<HeatmapBtn
+					linkTo={`${parentUrl}/student/heatmapEntry`}
+				/>
+					
+			</Card>
 
 		</CenteredContainer>
 	)
