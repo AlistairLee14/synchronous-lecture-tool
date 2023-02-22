@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import PDFJS from 'pdfjs-dist';
 import { Document, Page } from 'react-pdf';
 
 const HeatmapEditor = () => {

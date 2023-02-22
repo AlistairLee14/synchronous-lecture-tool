@@ -7,7 +7,7 @@ import KeywordInput from '../view_components/KeywordInput';
 import firebase from "firebase/app";
 import "firebase/database";
 import HeatmapEditor from '../view_components/HeatmapEditor';
-import ModalHeatmapEditor from '../view_components/ModalHeatmapEditor';
+
 
 const SECONDS_TO_QUESTION = 10;
 
@@ -53,24 +53,29 @@ const KeywordBtn = ({ linkTo, gameId, setKeywordCooldown, keywordCooldown }) => 
 // 		</Link>
 // 	)
 // }
-const HeatmapBtn = () => {
-	const [modal, setModal] = useState(false);
   
+const HeatmapBtn = ({ linkTo, gameId }) => {
+	const [showHeatmapModal, setShowHeatmapModal] = useState(false);
+
+	const toggleHeatmapModal = () => {
+		setShowHeatmapModal(!showHeatmapModal);
+	}
+
 	return (
 		<>
-			<Button color="primary" onClick={() => setModal(true)}>Highlight Difficulty Area</Button>
-			<Modal isOpen={modal} toggle={() => setModal(false)}>
-			<ModalHeader toggle={() => setModal(false)}>Heatmap Editor</ModalHeader>
-			<ModalBody>
-				<ModalHeatmapEditor />
-			</ModalBody>
-			<ModalFooter>
-				<Button color="secondary" onClick={() => setModal(false)}>Close</Button>
-			</ModalFooter>
+			<Button color="primary" onClick={toggleHeatmapModal}>Highlight difficulty area</Button>
+			<Modal isOpen={showHeatmapModal} toggle={toggleHeatmapModal}>
+				<ModalHeader toggle={toggleHeatmapModal}>Heatmap Editor</ModalHeader>
+				<ModalBody>
+					<HeatmapEditor gameId={gameId} />
+				</ModalBody>
+				<ModalFooter>
+					<Button color="secondary" onClick={toggleHeatmapModal}>Cancel</Button>
+				</ModalFooter>
 			</Modal>
 		</>
-	);
-};
+	)
+}
   
 
   
@@ -162,7 +167,7 @@ const PlayerRoute = ({ parentUrl }) => {
 
 			{/* Card for input 3 - heatmap */}
 			<Card body className="mt-4 mb-4">
-				<HeatmapBtn />
+				<HeatmapBtn gameId={gameId} />
 			</Card>
 
 		</CenteredContainer>
