@@ -10,7 +10,7 @@ import DefaultHostView from './DefaultHostView';
 
 const HostRoute = () => {
   let { url, path } = useRouteMatch();
-  console.log("path: " + path);
+  // console.log("path: " + path);
   // console.log("base: " + base);
   return (
     <Switch base>

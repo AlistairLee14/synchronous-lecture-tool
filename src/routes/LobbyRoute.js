@@ -41,9 +41,12 @@ const LobbyRoute = props => {
       </p>
       <PlayerList players={players} />
       <div className="mt-4">
-        <Link to={`/host/${gameId}/questions/pending`}>
+        <Link to={`/host/${gameId}/host/default`}>
           <Button color="primary">Start</Button>
         </Link>
+        {/* <Link to={`/host/${gameId}/questions/pending`}>
+          <Button color="primary">Start</Button>
+        </Link> */}
       </div>
     </CenteredContainer>
   )

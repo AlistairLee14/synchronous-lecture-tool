@@ -3,7 +3,7 @@ import QuestionStore from '../store/QuestionStore';
 
 const showCurrentQuestion = (gameId, gameStore = new GameStore(), questionStore = new QuestionStore()) => {
   gameStore.update(gameId, { state: 'showingQuestion' });
-  console.log("in showcurques");
+  // console.log("in showcurques");
   return gameStore
     .get(gameId)
     .then(game => {

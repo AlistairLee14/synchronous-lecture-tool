@@ -6,6 +6,9 @@ import showCurrentQuestion from '../use_cases/showCurrentQuestion'
 import Question from '../view_components/Question'
 import { startTimer } from '../utils/calculateTimeLeft';
 import CenteredContainer from '../view_components/CenteredContainer';
+import DifficultyCounter from '../use_cases/DifficultyCounter';
+import KeywordDisplay from '../use_cases/KeywordDisplay';
+
 
 const SECONDS_TO_QUESTION = 10;
 
@@ -59,41 +62,31 @@ const DefaultHostView = ({ parentUrl }) => {
 
 	return (
 		<CenteredContainer verticalCentered={true}>
-		{/* {question ?
-			<div>
-				<Question question={question} />
-				<div className="mt-4">Time left:</div>
-				<div className="display-1">
-				{Math.ceil(timeLeft)}
-				</div>
-				<ShowResultsBtn
-				isVisible={timeLeft <= 0}
-				linkTo={`${parentUrl}/results/${question.id}`}
-				/>
-			</div>
-			: <div>Loading...</div>
-		} */}
-
+		
 		{/* Option for students to send difficulty points, request a last 30 second summary, or highlight slide sections that are difficult */}
 		{/* get slidelink(s) from firebase? save links into firebase at slideuploader, then load it from here with identifier being the lecture session id */}
 		
+		<div style={{fontSize: '50px', fontWeight: 'bold', userSelect: 'none'}}>
+			Lecturer View
+		</div>
+		
 		
 		{/* Card for input 1 - keyword */}
+
 		<Card body className="mt-4 mb-4">
-			card 1
+			<KeywordDisplay gameId={gameId} />
 				
 		</Card>
 
-		{/* Card for input 2 - summarise last topic */}
+		{/* Card for input 2 - difficulty points in the last 5 minutes */}
 		<Card body className="mt-4 mb-4">
-			card 2
+			<DifficultyCounter gameId={gameId}/>
 			
 		</Card>
 
 		{/* Card for input 3 - heatmap */}
-		<Card body className="mt-4 mb-4">
-			card 3
-				
+		<Card style={{ userSelect: 'none' }} body className="mt-4 mb-4">
+      		Heatmap entry
 		</Card>
 
 		</CenteredContainer>

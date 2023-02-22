@@ -1,39 +1,117 @@
 import React, { useState, useEffect } from 'react';
+import { startTimer } from '../utils/calculateTimeLeft';
+
 import * as firebase from "firebase/app";
 import "firebase/database";
+import { Button } from 'reactstrap';
 
-const KeywordInput = ({ gameId }) => {
-  const [keyword, setKeyword] = useState('');
 
-  useEffect(() => {
-    const database = firebase.database();
-    const keywordsRef = database.ref(`keywords/${gameId}`);
+const KeywordInput = ({ gameId, keywordCooldown, setKeywordCooldown }) => {
+    const [keyword, setKeyword] = useState('');
 
-    return () => {
-      keywordsRef.off();
-    };
-  }, [gameId]);
+    useEffect(() => {
+        const keywordsRef = firebase.firestore().collection(`gameId/${gameId}/keywords`);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+        return () => {
+            keywordsRef.off();
+        };
+    }, [gameId]);
 
-    const database = firebase.database();
-    const keywordsRef = database.ref(`keywords/${gameId}`);
+    const submitKeyword = () => {
+        if (!keyword.trim()) {
+            return;
+        }
+        // Write the keyword to the Firebase database
+        const keywordsRef = firebase.firestore().collection(`gameId/${gameId}/keywords`);
+        keywordsRef.add({
+            keyword,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+        .then(function(docRef) {
+        })
+        .catch(function(error) {
+            console.error("Error adding keyword: ", error);
+        });
+        
+        startTimer({ seconds: 5, intervalCallback: setKeywordCooldown, endedCallback: () => setKeywordCooldown(0) });
+		setKeywordCooldown(5);
+        setKeyword(''); // reset the keyword state after submitting
+    }
 
-    keywordsRef.push({ keyword });
-    setKeyword('');
-  };
+    return (
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={keyword}
-        onChange={(event) => setKeyword(event.target.value)}
-      />
-      <button type="submit">Add Keyword</button>
-    </form>
-  );
+        (keywordCooldown <= 0) ?
+        (
+            <div style={{ padding: "20px", textAlign: "center" }}>
+                <form>
+                    <label 
+                        style={{ 
+                            color: 'black', 
+                            textDecoration: 'none', 
+                            ":hover": {
+                            textDecoration: 'none'
+                            }
+                        }} >
+                        Enter a keyword:
+                    </label>
+                    <input
+                    style={{ width: "100%", height: "40px" }}
+                    type="text"
+                    value={keyword}
+                    onChange={(event) => {
+                        setKeyword(event.target.value);
+                    }}
+                    />
+                    <Button
+                    style={{ marginTop: "20px" }}
+                    color="primary"
+                    onClick={() => {
+                        submitKeyword(gameId, keyword);
+                        setKeywordCooldown(5);
+                    }}
+                    >
+                    Submit
+                    </Button>
+                </form>
+            </div>
+        )
+        :
+        (
+            <div style={{ padding: "20px", textAlign: "center" }}>
+                <form>
+                    <label 
+                        style={{ 
+                            color: 'black', 
+                            textDecoration: 'none', 
+                            ":hover": {
+                            textDecoration: 'none'
+                            }
+                        }} >
+                        Please wait to submit another keyword
+                    </label>
+                    <input
+                    style={{ width: "100%", height: "40px" }}
+                    type="text"
+                    value={keyword}
+                    onChange={(event) => {
+                        setKeyword(event.target.value);
+                    }}
+                    />
+                    <Button
+                    disabled
+                    style={{ marginTop: "20px" }}
+                    color="primary"
+                    
+                    >
+                    Submit
+                    </Button>
+                </form>
+            </div>
+        )
+        
+        
+    );
 };
+
 
 export default KeywordInput;

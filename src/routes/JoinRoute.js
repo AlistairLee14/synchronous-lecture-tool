@@ -14,7 +14,7 @@ const JoinForm = ({ playerName, setPlayerName, joinGame }) => {
       joinGame();
     }}>
       <FormGroup>
-        <Label>Your Nickname:</Label>
+        <Label style={{ userSelect: 'none' }}>Your Nickname:</Label>
         <Input
           value={playerName}
           onChange={e => setPlayerName(e.target.value)}
@@ -39,7 +39,7 @@ const JoinRoute = () => {
 
   return (
     <CenteredContainer maxWidth={500} verticalCentered>
-      <h1>{game ? game.name : null}</h1>
+      <h1 style={{ userSelect: 'none' }}>{game ? game.name : null}</h1>
       {playerId ?
           <Redirect
             to={`/play/${gameId}/as/${playerId}`}
