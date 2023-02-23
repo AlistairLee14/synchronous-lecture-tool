@@ -13,7 +13,7 @@ const KeywordInput = ({ gameId, keywordCooldown, setKeywordCooldown }) => {
         const keywordsRef = firebase.firestore().collection(`gameId/${gameId}/keywords`);
 
         return () => {
-            keywordsRef.off();
+            keywordsRef.onSnapshot(() => {});
         };
     }, [gameId]);
 

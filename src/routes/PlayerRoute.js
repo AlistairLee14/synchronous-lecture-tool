@@ -27,12 +27,11 @@ firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 
-const KeywordBtn = ({ linkTo, gameId, setKeywordCooldown, keywordCooldown }) => {
+const KeywordBtn = ({ gameId, setKeywordCooldown, keywordCooldown }) => {
 	const [keyword, setKeyword] = useState('');
 
 
 	return (
-		<Link to={linkTo}>
 			<KeywordInput 
 				gameId={gameId}
 				onChange={(e, gameId) => {
@@ -42,7 +41,6 @@ const KeywordBtn = ({ linkTo, gameId, setKeywordCooldown, keywordCooldown }) => 
 				keywordCooldown={keywordCooldown}
 				setKeywordCooldown={setKeywordCooldown}
 			/>
-		</Link>
 	);
 }
 
