@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "http://wasabigeek.github.io/cahoots",
   "dependencies": {
+    "@pdftron/webviewer": "^8.12.0",
     "acorn": "^7.1.1",
     "bootstrap": "^4.4.1",
     "dotenv": "^16.0.3",
@@ -18,11 +19,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build & npm run move-static",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "move-static": "xcopy /s /i node_modules\\@pdftron\\webviewer\\public\\ dist\\public\\webviewer"
   },
   "eslintConfig": {
     "extends": "react-app"

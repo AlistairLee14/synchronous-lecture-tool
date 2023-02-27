@@ -30,7 +30,7 @@ const HeatmapEditor = ({ gameId }) => {
   return (
     <div>
       <h1>Heatmap Editor {gameId}</h1>
-      <MyPdfViewer pdfUrl={pdfUrl} />
+      <MyPdfViewer pdfUrl={pdfUrl} gameId={gameId} />
     </div>
   );
 };
