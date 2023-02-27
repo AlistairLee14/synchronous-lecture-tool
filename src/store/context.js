@@ -8,8 +8,12 @@ var firebaseConfig = {
   projectId: "synchronous-lecture-tool",
   storageBucket: "synchronous-lecture-tool.appspot.com",
   messagingSenderId: "237302221266",
-  appId: "1:237302221266:web:373375efd019c40b81e00b",
-  measurementId: "G-YSQFTPKE7E"
+  // appId: "1:237302221266:web:373375efd019c40b81e00b",
+  // measurementId: "G-YSQFTPKE7E"
+  appId: "1:237302221266:web:486cc51643874cba81e00b",
+  measurementId: "G-TB78VJS4SG",
+  databaseURL: "https://synchronous-lecture-tool.firebaseio.com"
+
 };
 firebase.initializeApp(firebaseConfig);
 
