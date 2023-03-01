@@ -106,21 +106,59 @@ const HeatmapEditor = ({ gameId }) => {
 		const pdfHeight = currentPage.getSize().height;
 		const actualWidth = (pdfWidth * width) / iframeRef.current.offsetWidth;
 		const actualHeight = (pdfHeight * height) / iframeRef.current.offsetHeight;
-		const annotation = {
-		  x: mouseX,
-		  y: mouseY,
-		  width: actualWidth,
-		  height: actualHeight,
-		  color: { r: 255, g: 255, b: 0 },
-		};
-		annotationsCopy.push(annotation);
-		setAnnotations(annotationsCopy);
-	  };
+	
+		// Create a canvas element to capture the highlighted area as an image
+		const canvas = document.createElement("canvas");
+		canvas.width = actualWidth;
+		canvas.height = actualHeight;
+		const context = canvas.getContext("2d");
+	
+		// Wait for the iframe to load before calling drawImage()
+		iframeRef.current.addEventListener("load", () => {
+			context.drawImage(iframeRef.current.contentWindow, mouseX, mouseY, actualWidth, actualHeight, 0, 0, actualWidth, actualHeight);
+			const imageDataUrl = canvas.toDataURL("image/png");
+	
+			// Set the captured image as the highlight image URL
+			setHighlightImageUrl(imageDataUrl);
+	
+			const annotation = {
+				x: mouseX,
+				y: mouseY,
+				width: actualWidth,
+				height: actualHeight,
+				color: { r: 255, g: 255, b: 0 },
+			};
+			annotationsCopy.push(annotation);
+			setAnnotations(annotationsCopy);
+		});
+	};
+	
+	
 	  
 
 	const handleSave = async () => {
 		const storage = firebase.storage();
-		const highlightedPdfBytes = await pdfDoc.save();
+	
+		// Create a new PDF document with highlights
+		const pdfDocCopy = await PDFDocument.load(buffer);
+		const page = pdfDocCopy.getPages()[0];
+		for (const annotation of annotations) {
+			const { x, y, width, height, color } = annotation;
+			const highlightImage = await fetch(highlightImageUrl).then((res) => res.blob());
+			const highlightImageBytes = await new Promise((resolve) => {
+				const reader = new FileReader();
+				reader.readAsArrayBuffer(highlightImage);
+				reader.onloadend = () => resolve(new Uint8Array(reader.result));
+			});
+			const highlightAppearanceStream = await pdfDocCopy.embedPng(highlightImageBytes);
+			const highlightAnnotation = page.createAnnotation("Highlight")
+				.setRectangle([x, y, x + width, y + height])
+				.setColor(rgb(color.r / 255, color.g / 255, color.b / 255))
+				.setAppearance(highlightAppearanceStream);
+			page.node.Annots.push(highlightAnnotation);
+		}
+		const highlightedPdfBytes = await pdfDocCopy.save();
+	
 		// Save highlighted PDF to Firebase
 		try {
 			const pdfRef = storage.ref(`highlightedLectureSlides/${gameId}/CS355_LAB1.pdf`);
@@ -130,6 +168,7 @@ const HeatmapEditor = ({ gameId }) => {
 			console.error("Error saving highlighted PDF to Firebase: ", error);
 		}
 	};
+	
 
 	if (loading) {
 		return <div>Loading PDF data...</div>;
