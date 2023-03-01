@@ -62,7 +62,7 @@ const HeatmapBtn = ({ linkTo, gameId }) => {
 	return (
 		<>
 			<Button color="primary" onClick={toggleHeatmapModal}>Highlight difficulty area</Button>
-			<Modal isOpen={showHeatmapModal} toggle={toggleHeatmapModal}>
+			<Modal isOpen={showHeatmapModal} toggle={toggleHeatmapModal} style={{ height: '80vh !important', maxWidth: '80vw', position: 'absolute !important' }}>
 				<ModalHeader toggle={toggleHeatmapModal}>Heatmap Editor</ModalHeader>
 				<ModalBody>
 					<HeatmapEditor gameId={gameId} />
