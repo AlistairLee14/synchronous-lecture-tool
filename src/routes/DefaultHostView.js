@@ -8,6 +8,7 @@ import { startTimer } from '../utils/calculateTimeLeft';
 import CenteredContainer from '../view_components/CenteredContainer';
 import DifficultyCounter from '../use_cases/DifficultyCounter';
 import KeywordDisplay from '../use_cases/KeywordDisplay';
+import CountTracker from '../view_components/CountTracker';
 
 
 const SECONDS_TO_QUESTION = 10;
@@ -86,7 +87,7 @@ const DefaultHostView = ({ parentUrl }) => {
 
 		{/* Card for input 3 - heatmap */}
 		<Card style={{ userSelect: 'none' }} body className="mt-4 mb-4">
-      		Heatmap entry
+      		<CountTracker gameId = {gameId} />
 		</Card>
 
 		</CenteredContainer>

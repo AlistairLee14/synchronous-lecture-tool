@@ -9,10 +9,12 @@ const HeatmapEditor = ({ gameId }) => {
 	const [loading, setLoading] = useState(true);
 	const [buffer, setBuffer] = useState(null);
 	const [pdfDoc, setPdfDoc] = useState(null);
+    const [selectedPage, setSelectedPage] = useState(0);
 	const [highlightedPdfUrl, setHighlightedPdfUrl] = useState(null);
 	const [annotations, setAnnotations] = useState([]);
 	const [highlightImageData, setHighlightImageData] = useState(null);
 	const [highlightImageUrl, setHighlightImageUrl] = useState(null);
+    const [pageCount, setPageCount] = useState(0);
 	const iframeRef = useRef(null);
 
 	useEffect(() => {
@@ -60,6 +62,7 @@ const HeatmapEditor = ({ gameId }) => {
 			const pdfDoc = await PDFDocument.load(buffer);
 			const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
 
+            setPageCount(pdfDoc.getPageCount())
 			setPdfDoc(pdfDoc);
 			setPdfUrl(pdfDataUri);
 			setLoading(false);
@@ -96,79 +99,47 @@ const HeatmapEditor = ({ gameId }) => {
 		helper();
 	}, [pdfDoc, annotations, highlightImageUrl]);
 
-	const handleHighlight = async (event) => {
-		const { x, y, width, height } = iframeRef.current.getBoundingClientRect();
-		const mouseX = event.clientX - x;
-		const mouseY = event.clientY - y;
-		const currentPage = pdfDoc.getPages()[0];
-		const annotationsCopy = annotations.slice();
-		const pdfWidth = currentPage.getSize().width;
-		const pdfHeight = currentPage.getSize().height;
-		const actualWidth = (pdfWidth * width) / iframeRef.current.offsetWidth;
-		const actualHeight = (pdfHeight * height) / iframeRef.current.offsetHeight;
-	
-		// Create a canvas element to capture the highlighted area as an image
-		const canvas = document.createElement("canvas");
-		canvas.width = actualWidth;
-		canvas.height = actualHeight;
-		const context = canvas.getContext("2d");
-	
-		// Wait for the iframe to load before calling drawImage()
-		iframeRef.current.addEventListener("load", () => {
-			context.drawImage(iframeRef.current.contentWindow, mouseX, mouseY, actualWidth, actualHeight, 0, 0, actualWidth, actualHeight);
-			const imageDataUrl = canvas.toDataURL("image/png");
-	
-			// Set the captured image as the highlight image URL
-			setHighlightImageUrl(imageDataUrl);
-	
-			const annotation = {
-				x: mouseX,
-				y: mouseY,
-				width: actualWidth,
-				height: actualHeight,
-				color: { r: 255, g: 255, b: 0 },
-			};
-			annotationsCopy.push(annotation);
-			setAnnotations(annotationsCopy);
-		});
-	};
-	
-	
-	  
 
-	const handleSave = async () => {
-		const storage = firebase.storage();
+
+    // const saveCount = () => {
+    //     console.log("selected page:", selectedPage);
+		
+    //     const countRef = firebase.firestore().collection(`gameId/${gameId}/counts`);
+	// 	countRef.add({
+    //         selectedPage,
+    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //     })
+    //     .then(function(docRef) {
+    //     })
+    //     .catch(function(error) {
+    //         console.error("Error adding count: ", error);
+    //     });
+
+	// 	console.log("added to firebase", selectedPage);
+    //     // countRef.doc(`${selectedPage}`).get().then(doc => {
+    //     //     console.log(doc.exists)            
+    //     // })
+    //     // const prevCount = doc.exists ? doc.data() : 0
+    //     // console.log(prevCount)
+    // }
+
+	const saveCount = () => {
+		console.log("selected page:", selectedPage);
 	
-		// Create a new PDF document with highlights
-		const pdfDocCopy = await PDFDocument.load(buffer);
-		const page = pdfDocCopy.getPages()[0];
-		for (const annotation of annotations) {
-			const { x, y, width, height, color } = annotation;
-			const highlightImage = await fetch(highlightImageUrl).then((res) => res.blob());
-			const highlightImageBytes = await new Promise((resolve) => {
-				const reader = new FileReader();
-				reader.readAsArrayBuffer(highlightImage);
-				reader.onloadend = () => resolve(new Uint8Array(reader.result));
+		const countRef = firebase.firestore().doc(`gameId/${gameId}/DifficultPages/${selectedPage}`);
+	
+		firebase.firestore().runTransaction(function(transaction) {
+			return transaction.get(countRef).then(function(doc) {
+				const newCount = (doc.exists ? doc.data().count + 1 : 1);
+				transaction.set(countRef, { count: newCount, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
 			});
-			const highlightAppearanceStream = await pdfDocCopy.embedPng(highlightImageBytes);
-			const highlightAnnotation = page.createAnnotation("Highlight")
-				.setRectangle([x, y, x + width, y + height])
-				.setColor(rgb(color.r / 255, color.g / 255, color.b / 255))
-				.setAppearance(highlightAppearanceStream);
-			page.node.Annots.push(highlightAnnotation);
-		}
-		const highlightedPdfBytes = await pdfDocCopy.save();
-	
-		// Save highlighted PDF to Firebase
-		try {
-			const pdfRef = storage.ref(`highlightedLectureSlides/${gameId}/CS355_LAB1.pdf`);
-			await pdfRef.put(highlightedPdfBytes);
-			console.log("Highlighted PDF saved to Firebase.");
-		} catch (error) {
-			console.error("Error saving highlighted PDF to Firebase: ", error);
-		}
-	};
-	
+		}).then(function() {
+			console.log("Count added to firestore", selectedPage);
+		}).catch(function(error) {
+			console.error("Error adding count: yunh", error);
+		});
+	}
+
 
 	if (loading) {
 		return <div>Loading PDF data...</div>;
@@ -184,10 +155,15 @@ const HeatmapEditor = ({ gameId }) => {
 			frameBorder="0"
 			style={{ width: "100%", height: "60vh" }}
 		></iframe>
-		
-		<button onClick={handleHighlight}>Highlight</button>
-		<button onClick={handleSave}>Save</button>
+        <div style={{display: "flex", justifyContent: "center"}}>
+            <button onClick={saveCount}>Select Page</button>
+            <select name="" id="" onChange={(e) => setSelectedPage(e.target.value)}>
+                {
+                    Array(pageCount).fill().map((_, i) => i+1).map((i) => <option key={i} value={i}>{i}</option>)
+                }
+            </select>
 
+        </div>
 	</div>
 	);
 };
