@@ -16,43 +16,94 @@ const HeatmapEditor = ({ gameId }) => {
 	const [highlightImageUrl, setHighlightImageUrl] = useState(null);
     const [pageCount, setPageCount] = useState(0);
 	const iframeRef = useRef(null);
+	const [pdfLoading, setPdfLoading] = useState(true);
+
+	// useEffect(() => {
+	// 	const storage = firebase.storage();
+
+	// 	try {
+	// 	const pdfRef = storage.ref(`lectureSlides/${gameId}/CS355_LAB1.pdf`);
+
+	// 	pdfRef.getDownloadURL().then((url) => {
+	// 		fetch(url)
+	// 		.then((res) => {
+	// 			const reader = res.body.getReader();
+	// 			return new ReadableStream({
+	// 			start(controller) {
+	// 				return pump();
+	// 				function pump() {
+	// 				return reader.read().then(({ done, value }) => {
+	// 					// When no more data needs to be consumed, close the stream
+	// 					if (done) {
+	// 					controller.close();
+	// 					return;
+	// 					}
+	// 					// Enqueue the next data chunk into our target stream
+	// 					controller.enqueue(value);
+	// 					return pump();
+	// 				});
+	// 				}
+	// 			},
+	// 			});
+	// 		})
+	// 		.then((stream) => new Response(stream))
+	// 		.then((response) => response.arrayBuffer())
+	// 		.then((buf) => setBuffer(buf));
+	// 	});
+	// 	} catch (error) {
+	// 	console.error("Error retrieving PDF data: ", error);
+	// 	}
+	// }, [gameId]);
 
 	useEffect(() => {
 		const storage = firebase.storage();
-
+		
 		try {
-		const pdfRef = storage.ref(`lectureSlides/${gameId}/CS355_LAB1.pdf`);
-
-		pdfRef.getDownloadURL().then((url) => {
-			fetch(url)
-			.then((res) => {
-				const reader = res.body.getReader();
-				return new ReadableStream({
-				start(controller) {
-					return pump();
-					function pump() {
-					return reader.read().then(({ done, value }) => {
-						// When no more data needs to be consumed, close the stream
-						if (done) {
-						controller.close();
-						return;
-						}
-						// Enqueue the next data chunk into our target stream
-						controller.enqueue(value);
+		  const slidesRef = storage.ref(`lectureSlides/${gameId}`);
+		  slidesRef.listAll().then((result) => {
+			if (result.items.length > 0) {
+			  result.items[0].getDownloadURL().then((url) => {
+				fetch(url)
+				  .then((res) => {
+					const reader = res.body.getReader();
+					return new ReadableStream({
+					  start(controller) {
 						return pump();
+						function pump() {
+						  return reader.read().then(({ done, value }) => {
+							// When no more data needs to be consumed, close the stream
+							if (done) {
+							  controller.close();
+							  return;
+							}
+							// Enqueue the next data chunk into our target stream
+							controller.enqueue(value);
+							return pump();
+						  });
+						}
+					  },
 					});
-					}
-				},
-				});
-			})
-			.then((stream) => new Response(stream))
-			.then((response) => response.arrayBuffer())
-			.then((buf) => setBuffer(buf));
-		});
+				  })
+				  .then((stream) => new Response(stream))
+				  .then((response) => response.arrayBuffer())
+				  .then(async (buf) => {
+					setBuffer(buf);
+					const pdfDoc = await PDFDocument.load(buf);
+					const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
+					setPageCount(pdfDoc.getPageCount());
+					setPdfDoc(pdfDoc);
+					setPdfUrl(pdfDataUri);
+					setPdfLoading(false);
+				  });
+			  });
+			}
+		  });
 		} catch (error) {
-		console.error("Error retrieving PDF data: ", error);
+		  console.error("Error retrieving PDF data: ", error);
 		}
-	}, [gameId]);
+	  }, [gameId]);
+	  
+	  
 
 	useEffect(() => {
 		if (!buffer) return;
@@ -99,30 +150,6 @@ const HeatmapEditor = ({ gameId }) => {
 		helper();
 	}, [pdfDoc, annotations, highlightImageUrl]);
 
-
-
-    // const saveCount = () => {
-    //     console.log("selected page:", selectedPage);
-		
-    //     const countRef = firebase.firestore().collection(`gameId/${gameId}/counts`);
-	// 	countRef.add({
-    //         selectedPage,
-    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //     })
-    //     .then(function(docRef) {
-    //     })
-    //     .catch(function(error) {
-    //         console.error("Error adding count: ", error);
-    //     });
-
-	// 	console.log("added to firebase", selectedPage);
-    //     // countRef.doc(`${selectedPage}`).get().then(doc => {
-    //     //     console.log(doc.exists)            
-    //     // })
-    //     // const prevCount = doc.exists ? doc.data() : 0
-    //     // console.log(prevCount)
-    // }
-
 	const saveCount = () => {
 		console.log("selected page:", selectedPage);
 	
@@ -146,26 +173,38 @@ const HeatmapEditor = ({ gameId }) => {
 	}
 
 	return (
-	<div>
-		{/* <h1>Heatmap Editor {gameId}</h1> */}
-		<iframe
-			title="pdf-viewer"
-			ref={iframeRef}
-			src={highlightedPdfUrl || pdfUrl}
-			frameBorder="0"
-			style={{ width: "100%", height: "60vh" }}
-		></iframe>
-        <div style={{display: "flex", justifyContent: "center"}}>
-            <button onClick={saveCount}>Select Page</button>
-            <select name="" id="" onChange={(e) => setSelectedPage(e.target.value)}>
-                {
-                    Array(pageCount).fill().map((_, i) => i+1).map((i) => <option key={i} value={i}>{i}</option>)
-                }
-            </select>
-
-        </div>
-	</div>
-	);
+		<div>
+		  {pdfLoading && <div>Loading PDF data...</div>}
+		  {!pdfLoading && (
+			<>
+			  <iframe
+				title="pdf-viewer"
+				ref={iframeRef}
+				src={highlightedPdfUrl || pdfUrl}
+				frameBorder="0"
+				style={{ width: "100%", height: "60vh" }}
+			  ></iframe>
+			  <div style={{ display: "flex", justifyContent: "center" }}>
+				<button onClick={saveCount}>Select Page</button>
+				<select
+				  name=""
+				  id=""
+				  onChange={(e) => setSelectedPage(e.target.value)}
+				>
+				  {Array(pageCount)
+					.fill()
+					.map((_, i) => i + 1)
+					.map((i) => (
+					  <option key={i} value={i}>
+						{i}
+					  </option>
+					))}
+				</select>
+			  </div>
+			</>
+		  )}
+		</div>
+	  );
 };
 
 export default HeatmapEditor;

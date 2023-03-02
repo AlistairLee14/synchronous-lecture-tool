@@ -27,7 +27,7 @@ const DifficultyCounter = (props) => {
     }, [gameId]);
 
     return (
-        <div style={{ userSelect: 'none' }}>
+        <div style={{ userSelect: 'none', maxWidth: '100%', maxHeight: '100%' }}>
             <div style={{ marginBottom: '10px',textAlign: 'left', fontWeight: "bold", fontSize: "20px", width: '100%' }}>
                 Difficulty Points (Last 5 Minutes): 
             </div>
