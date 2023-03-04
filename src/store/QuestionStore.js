@@ -19,6 +19,7 @@ class QuestionStore extends BaseStore {
       chain = chain.collection('lecture_session_id').doc(scopes.gameId).collection('slides');
       addAttrs['gameId'] = scopes.gameId;
     }
+    console.log('questionId', questionId)
 
     return chain
       .doc(questionId)

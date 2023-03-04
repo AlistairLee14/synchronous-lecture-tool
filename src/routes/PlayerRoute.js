@@ -43,14 +43,6 @@ const KeywordBtn = ({ gameId, setKeywordCooldown, keywordCooldown }) => {
 			/>
 	);
 }
-
-// const HeatmapBtn = ({ linkTo }) => {
-// 	return (
-// 		<Link to={`/student/heatmapEditor`}>
-// 			<Button color="primary">Highlight difficulty area</Button>
-// 		</Link>
-// 	)
-// }
   
 const HeatmapBtn = ({ linkTo, gameId }) => {
 	const [showHeatmapModal, setShowHeatmapModal] = useState(false);
@@ -65,7 +57,7 @@ const HeatmapBtn = ({ linkTo, gameId }) => {
 			<Modal isOpen={showHeatmapModal} toggle={toggleHeatmapModal} style={{ height: '80vh !important', maxWidth: '80vw', position: 'absolute !important' }}>
 				<ModalHeader toggle={toggleHeatmapModal}>Heatmap Editor</ModalHeader>
 				<ModalBody>
-					<HeatmapEditor gameId={gameId} />
+					<HeatmapEditor gameId={gameId} setShowHeatmapModal={setShowHeatmapModal} />
 				</ModalBody>
 				<ModalFooter>
 					<Button color="secondary" onClick={toggleHeatmapModal}>Cancel</Button>
@@ -165,7 +157,7 @@ const PlayerRoute = ({ parentUrl }) => {
 
 			{/* Card for input 3 - heatmap */}
 			<Card body className="mt-4 mb-4">
-				<HeatmapBtn gameId={gameId} />
+				<HeatmapBtn gameId={gameId} setShowHeatmapModal={setShowHeatmapModal}/>
 			</Card>
 
 		</CenteredContainer>

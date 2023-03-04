@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import firebase from "firebase/app";
 import "firebase/firestore";
 import fuzzysort from 'fuzzysort';
 import FinalResultsRoute from '../routes/FinalResultsRoute';
+import { Card } from 'reactstrap';
 
 var firebaseConfig = {
     apiKey: "AIzaSyCgz1Jo6ueG0pTIC4mwhaD6kGa0ehIWLsQ",
@@ -105,7 +106,8 @@ function removeWhitespaceAndPunctuation(array) {
 const KeywordDisplay = ({gameId}) => {
     const [keywords, setKeywords] = useState([]);
     const [strongKeywords, setStrongKeywords] = useState([]);
-  
+    const contentRef = useRef(null);
+
     useEffect(() => {
         const unsubscribe = firebase.firestore().collection(`gameId/${gameId}/keywords`).onSnapshot((snapshot) => {
             const updatedKeywords = [];
@@ -131,63 +133,52 @@ const KeywordDisplay = ({gameId}) => {
     }, [gameId]);
   
     return (
-        <div style={{ userSelect: 'none' }}>
+        <div style={{ height: '0 auto', userSelect: 'none' }}>
             <div style={{ marginBottom: '10px',textAlign: 'left', fontWeight: "bold", fontSize: "20px", width: '100%' }}>
                 Keywords:
             </div>
-            {/* keywords is the targets of fuzzysort.go() */}
-            {/* real list: 
-            {strongKeywords && strongKeywords.length > 0 ? removeAlmostDuplicates(removeWhitespaceAndPunctuation(strongKeywords)).join(", ") : "No keywords yet"}
-            <br/>
-            <br/>
-            all strongkeywords: 
-            {strongKeywords.join(", ")}
 
-            <br/>
-            <br/>
-            all keywords: 
-            {keywords && keywords.length > 0 ? keywords.join(", ") : "No keywords yet"} */}
-
-<div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-  {removeAlmostDuplicates(removeWhitespaceAndPunctuation(strongKeywords)).length === 0 ? (
-    <div style={{
-        background: "#A7C7E7",
-        borderRadius: "30px",
-        padding: "15px 30px",
-        margin: "15px",
-        fontWeight: "bold",
-        textAlign: "center",
-        color: "#5A5A5A",
-        fontSize: "20px",
-        boxShadow: "2px 2px 5px rgba(0,0,0,0.1)"
-      }}>
-      No keywords yet
-    </div>
-  ) : (
-    removeAlmostDuplicates(removeWhitespaceAndPunctuation(strongKeywords)).map((keyword, index) => (
-      <div
-        key={index}
-        style={{
-          background: "#A7C7E7",
-          borderRadius: "30px",
-          padding: "15px 30px",
-          margin: "15px",
-          fontWeight: "bold",
-          textAlign: "center",
-          color: "#5A5A5A",
-          fontSize: "20px",
-          boxShadow: "2px 2px 5px rgba(0,0,0,0.1)"
-        }}
-      >
-        {keyword}
-      </div>
-    ))
-  )}
-</div>
+            <div style={{ height: '0 auto',display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+            {removeAlmostDuplicates(removeWhitespaceAndPunctuation(strongKeywords)).length === 0 ? (
+                <div style={{
+                    background: "#A7C7E7",
+                    borderRadius: "30px",
+                    padding: "15px 30px",
+                    margin: "15px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    color: "#5A5A5A",
+                    fontSize: "20px",
+                    boxShadow: "2px 2px 5px rgba(0,0,0,0.1)"
+                }}>
+                No keywords yet
+                </div>
+            ) : (
+                removeAlmostDuplicates(removeWhitespaceAndPunctuation(strongKeywords)).map((keyword, index) => (
+                <div
+                    key={index}
+                    style={{
+                    background: "#A7C7E7",
+                    borderRadius: "30px",
+                    padding: "15px 30px",
+                    margin: "15px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    color: "#5A5A5A",
+                    fontSize: "20px",
+                    boxShadow: "2px 2px 5px rgba(0,0,0,0.1)"
+                    }}
+                >
+                    {keyword}
+                </div>
+                ))
+            )}
+            </div>
 
 
         </div>
     );
+
   };
 
 export default KeywordDisplay;

@@ -35,7 +35,7 @@ const DefaultHostView = ({ parentUrl }) => {
 	useEffect(() => {
 		if (gameId) {
 			startTimer({ seconds: 0, intervalCallback: setSummaryCooldown, endedCallback: setSummaryCooldown });
-			showCurrentQuestion(gameId).then(setQuestion);
+			// showCurrentQuestion(gameId).then(setQuestion);
 		}
 	}, [gameId]);
 
@@ -45,31 +45,28 @@ const DefaultHostView = ({ parentUrl }) => {
 			{/* Option for students to send difficulty points, request a last 30 second summary, or highlight slide sections that are difficult */}
 			{/* get slidelink(s) from firebase? save links into firebase at slideuploader, then load it from here with identifier being the lecture session id */}
 			
-			<div style={{ fontSize: '50px', fontWeight: 'bold', userSelect: 'none', marginBottom: '10px', wordWrap: 'break-word' }}>
+			<Card body className="mt-4 mb-4" style={{ paddingBottom: '10vh', fontSize: '50px', fontWeight: 'bold', userSelect: 'none', paddingTop: '5vh', wordWrap: 'break-word', minWidth: '300px', minHeight: '50px',maxHeight:'200px',position: 'relative', zIndex: 1, }}>
 				Lecturer View
-			</div>
-			
-			
+			</Card>
+
 			{/* Card for input 1 - keyword */}
-
-			<Card body className="mt-4 mb-4" style={{ minWidth: '300px', minHeight: '150px'}}>
+			<Card body className="mt-4 mb-4" style={{ width: '100%', minWidth: 'min-content', minHeight: 'min-content'}}>
 				<KeywordDisplay gameId={gameId} />
-					
 			</Card>
 
-			{/* Card for input 2 - difficulty points in the last 5 minutes */}
-			<Card body className="mt-4 mb-4" style={{ minWidth: '300px', minHeight: '150px'}}>
-				<DifficultyCounter gameId={gameId}/>
-				
-			</Card>
+			<div style={{ display: 'flex', flexDirection: 'row' }}>
+				{/* Card for input 2 - difficulty points in the last 5 minutes */}
+				<Card body className="mt-4 mb-4" style={{ width: '30%', minWidth: 'min-content', minHeight: 'min-content',maxHeight:'200px', marginRight: '20px' }}>
+					<DifficultyCounter gameId={gameId}/>
+				</Card>
 
-			{/* Card for input 3 - heatmap */}
-			<Card body className="mt-4 mb-4" style={{ minHeight: "300px", minWidth: "300px"}}>
-				<CountTracker gameId={gameId} />
-			</Card>
+				{/* Card for input 3 - heatmap */}
+				<Card body className="mt-4 mb-4" style={{ width: '70%', minHeight: "min-content", minWidth: "min-content"}}>
+					<CountTracker gameId={gameId} />
+				</Card>
+			</div>
 	  	</CenteredContainer>
 	)
 }
   
-  export default DefaultHostView;
-  
+export default DefaultHostView
