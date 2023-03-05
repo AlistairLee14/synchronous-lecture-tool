@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import firebase from "firebase/app";
 import "firebase/firestore";
-import fuzzysort from 'fuzzysort';
 import FinalResultsRoute from '../routes/FinalResultsRoute';
 import { Card } from 'reactstrap';
 
