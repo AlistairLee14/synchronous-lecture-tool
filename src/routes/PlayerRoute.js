@@ -9,6 +9,7 @@ import "firebase/database";
 import HeatmapEditor from '../view_components/HeatmapEditor';
 
 
+
 const SECONDS_TO_QUESTION = 10;
 
 const firebaseConfig = {
@@ -74,7 +75,25 @@ const PlayerRoute = ({ parentUrl }) => {
 	const [summaryCooldown, setSummaryCooldown] = useState(5);
 	const [keywordCooldown, setKeywordCooldown] = useState(5);
 	const [showHeatmapModal, setShowHeatmapModal] = useState(false);
+	const [gameTitle, setGameTitle] = useState('');
+	const [sessionCode, setSessionCode] = useState('');
 
+	useEffect(() => {
+		// Retrieve the game title from Firebase when the component mounts
+		const db = firebase.firestore();
+		db.collection('games')
+		  .doc(gameId)
+		  .get()
+		  .then((doc) => {
+			if (doc.exists) {
+			  setGameTitle(doc.data().name);
+			  setSessionCode(doc.data().shortCode);
+			}
+		  })
+		  .catch((error) => {
+			console.error('Error retrieving game title:', error);
+		  });
+	  }, [gameId]);
 
 	const SummariseBtn = ({ summaryCooldown, gameId, setSummaryCooldown }) => {
 		return (summaryCooldown <= 0) ?
@@ -124,13 +143,16 @@ const PlayerRoute = ({ parentUrl }) => {
 		}
 	}, [gameId])
 
+
 	return (
 		<CenteredContainer verticalCentered={true}>
-			{/* Option for students to send difficulty points, request a last 30 second summary, or highlight slide sections that are difficult */}
-			{/* get slidelink(s) from firebase? save links into firebase at slideuploader, then load it from here with identifier being the lecture session id */}
 			
 			<div style={{fontSize: '50px', fontWeight: 'bold', userSelect: 'none' }}>
-				Student View
+				Student - {gameTitle}
+			</div>
+
+			<div style={{ position: 'absolute', top: 0, right: 0, margin: '10px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#A7C7E7', padding: '5px 10px', borderRadius: '5px' }}>
+				Session code: {sessionCode}
 			</div>
 
 			{/* Card for input 1 - keyword */}
