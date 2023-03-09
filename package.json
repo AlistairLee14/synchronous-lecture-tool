@@ -2,7 +2,7 @@
   "name": "cahoots",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://wasabigeek.github.io/cahoots",
+  "homepage": "./",
   "dependencies": {
     "@pdftron/webviewer": "^8.12.0",
     "acorn": "^7.1.1",

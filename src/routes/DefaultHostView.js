@@ -45,9 +45,9 @@ const DefaultHostView = ({ parentUrl }) => {
 			{/* Option for students to send difficulty points, request a last 30 second summary, or highlight slide sections that are difficult */}
 			{/* get slidelink(s) from firebase? save links into firebase at slideuploader, then load it from here with identifier being the lecture session id */}
 			
-			<Card body className="mt-4 mb-4" style={{ paddingBottom: '10vh', fontSize: '50px', fontWeight: 'bold', userSelect: 'none', paddingTop: '5vh', wordWrap: 'break-word', minWidth: '300px', minHeight: '50px',maxHeight:'200px',position: 'relative', zIndex: 1, }}>
+			<div body className="mt-4 mb-4" style={{ fontSize: '50px', fontWeight: 'bold', userSelect: 'none', wordWrap: 'break-word', minWidth: '300px', minHeight: '50px',maxHeight:'200px',position: 'relative', zIndex: 1, }}>
 				Lecturer View
-			</Card>
+			</div>
 
 			{/* Card for input 1 - keyword */}
 			<Card body className="mt-4 mb-4" style={{ width: '100%', minWidth: 'min-content', minHeight: 'min-content'}}>

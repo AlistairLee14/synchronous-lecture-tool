@@ -22,15 +22,20 @@ const HeatmapEditor = ({ gameId, setShowHeatmapModal }) => {
 		const storage = firebase.storage();
 		
 		try {
+			// Get a reference to the Firebase Storage location of the lecture
+			// slides with the specified gameId using the ref() method on the storage object.
 			const slidesRef = storage.ref(`lectureSlides/${gameId}`);
 			slidesRef.listAll().then((result) => {
 				if (result.items.length > 0) {
 				result.items[0].getDownloadURL().then((url) => {
 					fetch(url)
+					// When the Promise resolves, execute the callback function with the res parameter
 					.then((res) => {
 						const reader = res.body.getReader();
 						return new ReadableStream({
 						start(controller) {
+							// A recursive function that reads chunks of data from the reader object 
+							// and enqueues them into the stream until there is no more data to be read.
 							return pump();
 							function pump() {
 							return reader.read().then(({ done, value }) => {
@@ -47,8 +52,10 @@ const HeatmapEditor = ({ gameId, setShowHeatmapModal }) => {
 						},
 						});
 					})
-					.then((stream) => new Response(stream))
-					.then((response) => response.arrayBuffer())
+					.then((stream) => new Response(stream)) // Return a new Response object that wraps the stream object.
+					.then((response) => response.arrayBuffer()) // return the content of the Response object as an ArrayBuffer.
+					// When the Promise returned by the previous then() method resolves, 
+					// execute an asynchronous function with the buf parameter.
 					.then(async (buf) => {
 						setBuffer(buf);
 						const pdfDoc = await PDFDocument.load(buf);
@@ -146,7 +153,6 @@ const HeatmapEditor = ({ gameId, setShowHeatmapModal }) => {
 				title="pdf-viewer"
 				ref={iframeRef}
 				src={highlightedPdfUrl || pdfUrl}
-				frameBorder="0"
 				style={{ width: "100%", height: "60vh" }}
 			  ></iframe>
 			  <div style={{ display: "flex", justifyContent: "center" }}>

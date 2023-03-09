@@ -24,7 +24,7 @@ const LobbyRoute = props => {
   let { gameId } = useParams();
   const [players, setPlayers] = useState([]);
   const [game, setGame] = useState(null);
-  const joinUrl = `${window.location.origin}/cahoots/`;
+  const joinUrl = `${window.location.origin}`;
 
   useEffect(() => {
     if (gameId) {

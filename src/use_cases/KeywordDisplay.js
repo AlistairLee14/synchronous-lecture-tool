@@ -54,7 +54,7 @@ function levenshteinDistance(s, t) {
     for (let j = 0; j <= n; j++) {
         d[0][j] = j;
     }
-    
+
     // Calculate the matrix
     for (let j = 1; j <= n; j++) {
         for (let i = 1; i <= m; i++) {
@@ -62,15 +62,23 @@ function levenshteinDistance(s, t) {
                 d[i][j] = d[i-1][j-1];
             } else {
                 d[i][j] = Math.min(
-                    d[i-1][j] + 1,
-                    d[i][j-1] + 1,
-                    d[i-1][j-1] + 1
+                    d[i-1][j] + 1, // deletion
+                    d[i][j-1] + 1, // insertion
+                    d[i-1][j-1] + 1 // substitution
                 );
+                
+                // Check for transposition
+                if (i > 1 && j > 1 && s[i-1] === t[j-2] && s[i-2] === t[j-1]) {
+                    d[i][j] = Math.min(
+                        d[i][j],
+                        d[i-2][j-2] + 1 // transposition
+                    );
+                }
             }
         }
     }
-    
-    // Return the Levenshtein distance
+
+    // Return the Levenshtein-Damerau distance
     return d[m][n];
 }
 
@@ -100,7 +108,6 @@ function removeWhitespaceAndPunctuation(array) {
     }
     return result;
 }
-  
 
 const KeywordDisplay = ({gameId}) => {
     const [keywords, setKeywords] = useState([]);
@@ -108,10 +115,14 @@ const KeywordDisplay = ({gameId}) => {
     const contentRef = useRef(null);
 
     useEffect(() => {
+        // Set up useEffect with a listener to the collection in Firebase, via onSnapshot()
         const unsubscribe = firebase.firestore().collection(`gameId/${gameId}/keywords`).onSnapshot((snapshot) => {
+
+            // Initialise new keywords and strongKeywords arrays
             const updatedKeywords = [];
             const updatedStrongKeywords = [];
-            console.log("unsubscribe running");
+
+            // Add each word to keywords, and strongKeywords if appropriate
             snapshot.forEach((doc) => {
 
                 if (fuzzyMatch(doc.data().keyword, updatedKeywords)) {
@@ -121,9 +132,10 @@ const KeywordDisplay = ({gameId}) => {
                 updatedKeywords.push(doc.data().keyword);
 
             });
+
+            // Set the state variables keywords and strongKeywords
             setKeywords(updatedKeywords);
             setStrongKeywords(updatedStrongKeywords);
-            // If a keyword has a strength < 10 then we want to make it a strongKeyword?
         });
     
         return () => {
