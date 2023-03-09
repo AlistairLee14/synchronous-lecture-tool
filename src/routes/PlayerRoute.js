@@ -55,7 +55,7 @@ const HeatmapBtn = ({ linkTo, gameId }) => {
 	return (
 		<>
 			<Button color="primary" onClick={toggleHeatmapModal}>Highlight difficulty area</Button>
-			<Modal isOpen={showHeatmapModal} toggle={toggleHeatmapModal} style={{ height: '80vh !important', maxWidth: '80vw', position: 'absolute !important' }}>
+			<Modal isOpen={showHeatmapModal} toggle={toggleHeatmapModal} style={{ height: '95vh !important', maxWidth: '95vw', position: 'absolute !important' }}>
 				<ModalHeader toggle={toggleHeatmapModal}>Heatmap Editor</ModalHeader>
 				<ModalBody>
 					<HeatmapEditor gameId={gameId} setShowHeatmapModal={setShowHeatmapModal} />
@@ -145,18 +145,18 @@ const PlayerRoute = ({ parentUrl }) => {
 
 
 	return (
-		<CenteredContainer verticalCentered={true}>
+		<CenteredContainer verticalCentered={true} style={{ minHeight: '100vh', paddingBottom: '50px' }}>
 			
-			<div style={{fontSize: '50px', fontWeight: 'bold', userSelect: 'none' }}>
+			<div style={{fontSize: '50px', fontWeight: 'bold', userSelect: 'none', paddingTop: '10px'}}>
 				Student - {gameTitle}
 			</div>
 
-			<div style={{ position: 'absolute', top: 0, right: 0, margin: '10px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#A7C7E7', padding: '5px 10px', borderRadius: '5px' }}>
+			<div style={{ position: 'absolute', top: 0, right: 0, margin: '0 auto',  fontSize: '16px', fontWeight: 'bold', backgroundColor: '#A7C7E7', padding: '5px 10px', borderRadius: '5px' }}>
 				Session code: {sessionCode}
 			</div>
 
 			{/* Card for input 1 - keyword */}
-			<Card body className="mt-4 mb-4">
+			<Card body className="mt-4 mb-4" style={{ margin: '0 auto', width: '100%' }}>
 				<KeywordBtn
 					onClick={() => submitKeyword({gameId, setKeywordCooldown})}
 					// linkTo={`${parentUrl}/student/keywordEntry`}
@@ -168,7 +168,7 @@ const PlayerRoute = ({ parentUrl }) => {
 			</Card>
 
 			{/* Card for input 2 - summarise last topic */}
-			<Card body className="mt-4 mb-4">
+			<Card body className="mt-4 mb-4" style={{ margin: '0 auto', width: '100%' }}>
 				<SummariseBtn 
 					summaryCooldown={summaryCooldown}
 					gameId={gameId}
@@ -178,7 +178,7 @@ const PlayerRoute = ({ parentUrl }) => {
 			</Card>
 
 			{/* Card for input 3 - heatmap */}
-			<Card body className="mt-4 mb-4">
+			<Card body className="mt-4 mb-4" style={{ margin: '0 auto', width: '100%' }}>
 				<HeatmapBtn gameId={gameId} setShowHeatmapModal={setShowHeatmapModal}/>
 			</Card>
 
