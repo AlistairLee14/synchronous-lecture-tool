@@ -9,10 +9,7 @@ const CountTracker = ({ gameId }) => {
     useEffect(() => {
         const countsRef = firebase.firestore().collection(`gameId/${gameId}/DifficultPages`);
         const unsubscribe = countsRef.onSnapshot((snapshot) => {
-            const newCounts = snapshot.docs.map((doc) => ({
-                name: doc.id,
-                count: doc.data().count,
-            }));
+            const newCounts = snapshot.docs.map((doc) => ({ name: doc.id, count: doc.data().count })).sort((a, b) => a.name - b.name);
             setCounts(newCounts);
         });
         return unsubscribe;
@@ -44,7 +41,7 @@ const CountTracker = ({ gameId }) => {
     return (
         <div>
             <div style={{ float: 'left',marginBottom: '10px',textAlign: 'left', fontWeight: "bold", fontSize: "20px", width: '100%' }}>
-                Page Difficulty:
+                Page Difficulty Distribution:
             </div>
             <div style={{ width: '600px', margin: '0 auto' }}>
                 

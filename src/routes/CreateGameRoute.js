@@ -22,14 +22,23 @@ const CreateGameRoute = props => {
     return <Redirect to="/games" />;
   } else {
     return (
-      <Container style={{maxWidth: "500px"}}>
+      <Container style={{
+        maxWidth: "500px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh"
+      }}>
         <h1>Start a lecture session</h1>
-        <FormGroup>
-          <Label for="name">Name:</Label>
+        <FormGroup style={{textAlign: "center"}}>
+          <Label for="name">Session name:</Label>
           <Input id="name" name="name" value={gameName} onChange={e => setGameName(e.target.value)} />
         </FormGroup>
         <Button color="primary" onClick={() => save({ name: gameName, ownerId: user.id }, setGame)}>Save</Button>
       </Container>
+      
+      
     )
   }
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from "react-router-dom";
 import { Button, Card } from 'reactstrap';
-
+import firebase from "firebase/app";
+import "firebase/database";
 import showCurrentQuestion from '../use_cases/showCurrentQuestion';
 import Question from '../view_components/Question';
 import { startTimer } from '../utils/calculateTimeLeft';
@@ -14,6 +15,25 @@ const DefaultHostView = ({ parentUrl }) => {
 	let { gameId } = useParams();
 	const [question, setQuestion] = useState(null);
 	const [summaryCooldown, setSummaryCooldown] = useState(0);
+	const [gameTitle, setGameTitle] = useState('');
+	const [sessionCode, setSessionCode] = useState('');
+
+	useEffect(() => {
+		// Retrieve the game title from Firebase when the component mounts
+		const db = firebase.firestore();
+		db.collection('games')
+		  .doc(gameId)
+		  .get()
+		  .then((doc) => {
+			if (doc.exists) {
+			  setGameTitle(doc.data().name);
+			  setSessionCode(doc.data().shortCode);
+			}
+		  })
+		  .catch((error) => {
+			console.error('Error retrieving game title:', error);
+		  });
+	  }, [gameId]);
 
 	const SummariseBtn = ({ isClickable, gameId }) => {
 		return isClickable ?
@@ -46,7 +66,11 @@ const DefaultHostView = ({ parentUrl }) => {
 			{/* get slidelink(s) from firebase? save links into firebase at slideuploader, then load it from here with identifier being the lecture session id */}
 			
 			<div body className="mt-4 mb-4" style={{ fontSize: '50px', fontWeight: 'bold', userSelect: 'none', wordWrap: 'break-word', minWidth: '300px', minHeight: '50px',maxHeight:'200px',position: 'relative', zIndex: 1, }}>
-				Lecturer View
+				Lecturer View - {gameTitle}
+			</div>
+
+			<div style={{ position: 'absolute', top: 0, right: 0, margin: '0 auto',  fontSize: '16px', fontWeight: 'bold', backgroundColor: '#A7C7E7', padding: '5px 10px', borderRadius: '5px' }}>
+				Session code: {sessionCode}
 			</div>
 
 			{/* Card for input 1 - keyword */}
