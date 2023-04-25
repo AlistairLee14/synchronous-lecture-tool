@@ -1,10 +1,10 @@
-An experiment at making a free-to-play quiz game.
-![Cahoots Screenshot](cahoots_screenshot.png?raw=true "Cahoots Screenshot")
+An web-based tool for investigating the feasibility of a web app enhancing lecture quality by fostering lecturer-student interaction without direct involvement in the lecture process.
+![Homepage Screenshot](homepage.png "Homepage Screenshot")
 
-# How to Play
-- Go to https://wasabigeek.github.io/cahoots/
-- Signup for an account and create a Game
-- Start the game, and share the join URL with friends
+# How to Use
+- Go to https://synchronous-lecture-tool.firebaseapp.com/
+- Signup for an account and create a Lecture
+- Upload lecture slides (must be .pdf format), and share the join code with student users
 
 # Developing
 - setup a firebase project:
@@ -16,12 +16,3 @@ An experiment at making a free-to-play quiz game.
 # Deploying
 - deploy the firestore rules `firebase deploy --only firestore:rules --project <PROJECT ID>`
 - `npm run deploy`
-
-# Dev Thoughts
-There were a few things I was experimenting with:
-- Firebase (also my first foray into a NoSQL database)
-- Trying to follow Uncle Bob's Clean Architecture, with a "use cases" folder, and also attempting to hide the Firebase implementation behind an interface
-
-I think the end result is still kinda messy, but it was interesting trying Clean Architecture out. I think use cases can fit pretty nicely with React's functional leanings, but it did feel like a lot of boilerplate.
- 
-I also tried to do an "entities" folder (might be using the wrong name for that) to represent the domain models more, but it seemed unnecessary given that everything's an object, and it didn't feel very React to store an OO instance (with methods) in state.
